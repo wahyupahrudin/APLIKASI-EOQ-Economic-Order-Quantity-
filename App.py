@@ -13,21 +13,33 @@ st.markdown("Masukkan nilai-nilai berikut untuk menghitung EOQ, melihat grafik, 
 D = st.number_input("Permintaan Tahunan (D)", min_value=1, step=1)
 S = st.number_input("Biaya Pemesanan per Order (S)", min_value=1)
 H = st.number_input("Biaya Penyimpanan per Unit (H)", min_value=1)
+work_days = st.number_input("Jumlah Hari Kerja dalam Setahun", value=360, min_value=1)
 
 if st.button("Hitung EOQ"):
     EOQ = np.sqrt((2 * D * S) / H)
     total_order = D / EOQ
     total_cost = (D / EOQ) * S + (EOQ / 2) * H
+    interval_days = work_days / total_order  # penambahan fitur ini
 
     # Tampilkan hasil
     st.success(f"EOQ: {EOQ:.2f} unit")
     st.info(f"Jumlah Pemesanan per Tahun: {total_order:.2f} kali")
     st.info(f"Total Biaya Persediaan: Rp {total_cost:,.2f}")
+    st.info(f"Permintaan Barang Setiap: {interval_days:.2f} hari sekali")
 
     # Tabel hasil
     hasil_df = pd.DataFrame({
-        "Parameter": ["Permintaan Tahunan (D)", "Biaya Pemesanan (S)", "Biaya Penyimpanan (H)", "EOQ", "Jumlah Pemesanan", "Total Biaya"],
-        "Nilai": [D, S, H, EOQ, total_order, total_cost]
+        "Parameter": [
+            "Permintaan Tahunan (D)",
+            "Biaya Pemesanan (S)",
+            "Biaya Penyimpanan (H)",
+            "Hari Kerja per Tahun",
+            "EOQ",
+            "Jumlah Pemesanan",
+            "Interval Permintaan (hari)",
+            "Total Biaya"
+        ],
+        "Nilai": [D, S, H, work_days, EOQ, total_order, interval_days, total_cost]
     })
     st.subheader("📋 Tabel Hasil")
     st.dataframe(hasil_df, use_container_width=True)
